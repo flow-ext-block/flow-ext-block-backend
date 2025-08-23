@@ -24,13 +24,13 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run build
 
-      - run: aws sts get-caller-identity
-
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: gha-deploy
+
+      - run: aws sts get-caller-identity
 
       - run: aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
       - run: |
