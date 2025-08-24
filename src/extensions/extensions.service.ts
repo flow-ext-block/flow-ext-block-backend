@@ -17,8 +17,10 @@ import { ExtensionSettings } from './entity/extension-settings.entity';
 const SETTINGS_ROW_ID = 1;
 const DEFAULT_CUSTOM_LIMIT = 200;
 const EXT_REGEX = /^[a-z0-9]+(\.[a-z0-9]+)*$/;
-function normalizeExt(ext: string) {
-  return ext?.toLowerCase().replace(/^\./, '').trim();
+export function normalizeExt(input?: string | null): string | null {
+  if (input == null) return null;
+  const s = input.trim().replace(/^\.+/, '').toLowerCase(); // 선행 점 여러 개 제거
+  return s.length ? s : null;
 }
 export async function insertExtensionUniqueOrThrow(
   em: EntityManager,
@@ -131,7 +133,7 @@ export class ExtensionsService {
         });
         return restored!;
       }
-      // 충돌-무시 삽입 시도 → 실패 시 헬퍼가 409로 분기
+      // 충돌-무시 삽입 시도 → 실패 시 409로 분기
       await insertExtensionUniqueOrThrow(
         em,
         extNorm,
@@ -150,6 +152,7 @@ export class ExtensionsService {
       throw new NotFoundException(`id=${id} 커스텀 확장자를 찾을 수 없습니다.`);
     }
   }
+
   async deleteAllCustomExtensions(): Promise<void> {
     await this.extensionRepository.manager.transaction(async (em) => {
       await em

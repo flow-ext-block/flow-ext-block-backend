@@ -3,8 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 export enum ExtensionType {
@@ -12,6 +12,10 @@ export enum ExtensionType {
   CUSTOM = 'CUSTOM',
 }
 
+@Index('uniq_extensions_ext_active', ['ext'], {
+  unique: true,
+  where: '"deletedAt" IS NULL', // 활성 행만 유니크 보장
+})
 @Entity('extensions')
 export class Extension {
   @PrimaryGeneratedColumn()
