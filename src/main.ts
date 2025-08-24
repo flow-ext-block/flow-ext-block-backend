@@ -8,6 +8,7 @@ async function bootstrap() {
   });
   const ALLOWED_ORIGINS = new Set<string>([
     'https://www.flow-ext-block.site',
+    'https://flow-ext-block.site',
     'http://localhost:5173',
   ]);
 
